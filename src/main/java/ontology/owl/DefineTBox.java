@@ -12,7 +12,7 @@ import org.apache.jena.graph.Node;
 /**
  * Created by edoardo on 03/05/2019.
  */
-public class DefineOntology {
+public class DefineTBox {
     private static final String VirtURL = "jdbc:virtuoso://sandslash.fib.upc.es:1111/";
     private static final String user = "dba";
     private static final String psw = "dba";

@@ -1,4 +1,4 @@
-import ontology.owl.DefineOntology;
+import ontology.owl.DefineTBox;
 
 /**
  * Created by edoardo on 03/05/2019.
@@ -14,7 +14,7 @@ public class Main {
         String operation = args[0];
 
         if ("create_ontology".equals(operation)) {
-            DefineOntology.run();
+            DefineTBox.run();
         }
     }
 }
