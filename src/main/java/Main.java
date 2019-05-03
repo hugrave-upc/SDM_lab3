@@ -1,4 +1,8 @@
+import ontology.owl.DefineABox;
 import ontology.owl.DefineTBox;
+import org.apache.jena.ontology.OntModel;
+import triplestore.Virtuoso;
+import virtuoso.jena.driver.VirtModel;
 
 /**
  * Created by edoardo on 03/05/2019.
@@ -14,7 +18,9 @@ public class Main {
         String operation = args[0];
 
         if ("create_ontology".equals(operation)) {
-            DefineTBox.run();
+            VirtModel vm = Virtuoso.connect();
+            OntModel TBoxModel = DefineTBox.run(vm);
+            DefineABox.run(vm, TBoxModel);
         }
     }
 }

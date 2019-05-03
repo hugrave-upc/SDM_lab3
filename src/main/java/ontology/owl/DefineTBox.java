@@ -1,22 +1,16 @@
 package ontology.owl;
 
-import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.*;
+import triplestore.Virtuoso;
 import virtuoso.jena.driver.*;
-import org.apache.jena.graph.Node;
 
 
 /**
  * Created by edoardo on 03/05/2019.
  */
 public class DefineTBox {
-    private static final String VirtURL = "jdbc:virtuoso://sandslash.fib.upc.es:1111/";
-    private static final String user = "dba";
-    private static final String psw = "dba";
-    private static final String graph_name = "http://localhost:8890/research";
     private static final String dbo = "http://dbpedia.org/ontology/";
 
     // Creating the ontology
@@ -27,14 +21,7 @@ public class DefineTBox {
     private static Ontology onto = ontModel.createOntology(baseURI);
 
 
-    public static void run() throws Exception {
-        System.out.println("Connecting to Virtuoso...");
-        VirtGraph graph = new VirtGraph(graph_name, VirtURL, user, psw);
-        System.out.println("Connected.");
-        graph.clear();
-
-        VirtModel vm = new VirtModel(graph);
-
+    public static OntModel run(VirtModel vm) {
         /*
          * Defining the classes hierarchy
          */
@@ -212,8 +199,10 @@ public class DefineTBox {
 
 
         Model researchModel = vm.add(ontModel);
-        //researchModel.write(System.out);
+        return ontModel;
 
+        // super expensive..
+        //researchModel.write(System.out);
     }
 
     private static void subClassOf(OntClass child, String parentURI) {
