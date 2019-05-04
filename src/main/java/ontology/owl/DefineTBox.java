@@ -15,7 +15,6 @@ public class DefineTBox {
 
     // Creating the ontology
     private static OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-    private static OntModel tmpModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
     private static final String ns = "http://localhost/ontology#";
     private static final String baseURI = "http://localhost/ontology";
     private static Ontology onto = ontModel.createOntology(baseURI);
@@ -40,16 +39,16 @@ public class DefineTBox {
         collection.addSubClass(proceeding);
         collection.addSubClass(volume);
 
-        tmpModel.read(dbo + "AcademicJournal");
-        OntClass journal = tmpModel.getOntClass(dbo + "AcademicJournal");
+        ontModel.read(dbo + "AcademicJournal");
+        OntClass journal = ontModel.getOntClass(dbo + "AcademicJournal");
         OntClass openJournal = ontModel.createClass(ns + "OpenAccessJournal");
         OntClass subscribingJournal = ontModel.createClass(ns + "SubscribingJournal");
         journal.addSubClass(openJournal);
         journal.addSubClass(subscribingJournal);
 
 
-        tmpModel.read(dbo + "AcademicConference");
-        OntClass academicConference = tmpModel.getOntClass(dbo + "AcademicConference");
+        ontModel.read(dbo + "AcademicConference");
+        OntClass academicConference = ontModel.getOntClass(dbo + "AcademicConference");
         OntClass conference = ontModel.createClass(ns + "Conference");
         OntClass workshop = ontModel.createClass(ns + "Workshop");
         academicConference.addSubClass(conference);
@@ -81,21 +80,21 @@ public class DefineTBox {
         paper.addSubClass(confPaper);
         paper.addSubClass(jourPaper);
 
-        tmpModel.read(dbo + "Organisation");
-        tmpModel.read(dbo + "Company");
-        tmpModel.read(dbo + "University");
-        OntClass organization = tmpModel.getOntClass(dbo + "Organisation");
-        OntClass company = tmpModel.getOntClass(dbo + "Company");
-        OntClass university = tmpModel.getOntClass(dbo + "University");
+        ontModel.read(dbo + "Organisation");
+        ontModel.read(dbo + "Company");
+        ontModel.read(dbo + "University");
+        OntClass organization = ontModel.getOntClass(dbo + "Organisation");
+        OntClass company = ontModel.getOntClass(dbo + "Company");
+        OntClass university = ontModel.getOntClass(dbo + "University");
 
-        tmpModel.read(dbo + "City");
-        OntClass city = tmpModel.getOntClass(dbo + "City");
+        ontModel.read(dbo + "City");
+        OntClass city = ontModel.getOntClass(dbo + "City");
 
         /*
          * Defining the object properties
          */
-        tmpModel.read(dbo + "writer");
-        ObjectProperty writer_prop = tmpModel.createObjectProperty(dbo + "writer");
+        ontModel.read(dbo + "writer");
+        ObjectProperty writer_prop = ontModel.createObjectProperty(dbo + "writer");
         writer_prop.setDomain(paper);
         writer_prop.addDomain(review);
         writer_prop.setRange(writer);
@@ -113,8 +112,8 @@ public class DefineTBox {
         collection_prop.addSubProperty(proceeding_prop);
         collection_prop.addSubProperty(volume_prop);
 
-        tmpModel.read(dbo + "publisher");
-        ObjectProperty publisher = tmpModel.getObjectProperty(dbo + "publisher");
+        ontModel.read(dbo + "publisher");
+        ObjectProperty publisher = ontModel.getObjectProperty(dbo + "publisher");
         publisher.addDomain(collection);
 
         ObjectProperty conferencePublisher = ontModel.createObjectProperty(ns + "conferencePublisher");
@@ -140,8 +139,8 @@ public class DefineTBox {
         topic_prop.addDomain(keyword);
         topic_prop.setRange(topic);
 
-        tmpModel.read(dbo + "employer");
-        ObjectProperty employer = tmpModel.getObjectProperty(dbo + "employer");
+        ontModel.read(dbo + "employer");
+        ObjectProperty employer = ontModel.getObjectProperty(dbo + "employer");
         employer.addDomain(writer);
         employer.addRange(organization);
 
@@ -149,8 +148,8 @@ public class DefineTBox {
         about.setDomain(review);
         about.setRange(paper);
 
-        tmpModel.read(dbo + "city");
-        ObjectProperty inCity = tmpModel.getObjectProperty(dbo + "city");
+        ontModel.read(dbo + "city");
+        ObjectProperty inCity = ontModel.getObjectProperty(dbo + "city");
         inCity.addDomain(edition);
         inCity.addDomain(organization);
         //inCity.addRange(city);
@@ -180,15 +179,15 @@ public class DefineTBox {
         description.setDomain(review);
         description.setRange(XSD.xstring);
 
-        tmpModel.read(dbo + "name");
-        DatatypeProperty name = tmpModel.getDatatypeProperty(dbo + "name");
+        ontModel.read(dbo + "name");
+        DatatypeProperty name = ontModel.getDatatypeProperty(dbo + "name");
         name.setDomain(writer);
         name.addDomain(organization);
         name.addDomain(keyword);
         //name.setRange(XSD.xstring);
 
-        tmpModel.read(dbo + "title");
-        DatatypeProperty title = tmpModel.getDatatypeProperty(dbo + "title");
+        ontModel.read(dbo + "title");
+        DatatypeProperty title = ontModel.getDatatypeProperty(dbo + "title");
         title.setDomain(paper);
         //title.setRange(XSD.xstring);
 
@@ -206,8 +205,8 @@ public class DefineTBox {
     }
 
     private static void subClassOf(OntClass child, String parentURI) {
-        tmpModel.read(parentURI);
-        OntClass parent = tmpModel.getOntClass(parentURI);
+        ontModel.read(parentURI);
+        OntClass parent = ontModel.getOntClass(parentURI);
         parent.addSubClass(child);
     }
 }
