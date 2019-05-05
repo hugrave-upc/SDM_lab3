@@ -22,9 +22,9 @@ public class Main {
             VirtModel vm = Virtuoso.connect();
 
             DefineTBox.run();
-            ResearchOntModel.getInstance().add(vm.asModel(vm.getGraph()));
             DefineABox.run();
-            vm.add(ResearchOntModel.getInstance().remove(vm.asModel(vm.getGraph())));
+
+            vm.add(ResearchOntModel.getInstance());
         }
     }
 }

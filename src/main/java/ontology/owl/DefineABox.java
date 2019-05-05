@@ -27,8 +27,8 @@ public class DefineABox {
     public static void run() {
 
         try {
-            //importWriters();
-            //importPapers();
+            importWriters();
+            importPapers();
             importWriterProp();
         }
         catch (IOException e) {
@@ -97,18 +97,20 @@ public class DefineABox {
         List<String[]> lines = CSV.read(writerProFilePath, separator);
 
         ObjectProperty writerProp = ontModel.getObjectProperty(dbo + "writer");
-        int i = 0;
+
         for (String[] line : lines) {
             String writerName = Utils.cleanURI(line[0]);
             String paperID = line[2];
 
-            Individual paper = ontModel.getIndividual(ns + paperID);
+            Individual paper = ontModel.getIndividual(ns + "paper" + paperID);
             Individual writer = ontModel.getIndividual(ns + writerName);
+            if (paper == null)
+                System.out.println("paper null");
+            if (writer == null)
+                System.out.println("Writer null");
             Statement s = ontModel.createStatement(paper, writerProp, writer);
             ontModel.add(s);
-            i++;
-            if (i == 10)
-                break;
+
         }
     }
 }
