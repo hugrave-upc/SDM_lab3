@@ -14,13 +14,11 @@ public class DefineTBox {
     private static final String dbo = "http://dbpedia.org/ontology/";
 
     // Creating the ontology
-    private static OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+    private static OntModel ontModel = ResearchOntModel.getInstance();
     private static final String ns = "http://localhost/ontology#";
-    private static final String baseURI = "http://localhost/ontology";
-    private static Ontology onto = ontModel.createOntology(baseURI);
 
 
-    public static OntModel run(VirtModel vm) {
+    public static void run() {
         /*
          * Defining the classes hierarchy
          */
@@ -195,10 +193,6 @@ public class DefineTBox {
         year.setDomain(volume);
         year.addDomain(edition);
         year.setRange(XSD.gYear);
-
-
-        Model researchModel = vm.add(ontModel);
-        return ontModel;
 
         // super expensive..
         //researchModel.write(System.out);

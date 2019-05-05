@@ -1,5 +1,6 @@
 import ontology.owl.DefineABox;
 import ontology.owl.DefineTBox;
+import ontology.owl.ResearchOntModel;
 import org.apache.jena.ontology.OntModel;
 import triplestore.Virtuoso;
 import virtuoso.jena.driver.VirtModel;
@@ -19,8 +20,11 @@ public class Main {
 
         if ("create_ontology".equals(operation)) {
             VirtModel vm = Virtuoso.connect();
-            OntModel TBoxModel = DefineTBox.run(vm);
-            DefineABox.run(vm, TBoxModel);
+
+            DefineTBox.run();
+            ResearchOntModel.getInstance().add(vm.asModel(vm.getGraph()));
+            DefineABox.run();
+            vm.add(ResearchOntModel.getInstance().remove(vm.asModel(vm.getGraph())));
         }
     }
 }
