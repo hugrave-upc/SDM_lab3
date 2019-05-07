@@ -254,6 +254,7 @@ public class DefineABox {
         for (String[] line : lines) {
             String editionID = Utils.cleanURI(line[0]);
             String proceedingID = Utils.makeISBN();
+            Utils.putProceeding(editionID, proceedingID);
 
             // Adding the edition
             Individual edition = editionClass.createIndividual(ontNS + editionID);
@@ -266,6 +267,29 @@ public class DefineABox {
             ontModel.add(proceeding, proceedingIDProp, literalID);
 
             ontModel.add(proceeding, publisherProp, edition);
+
+        }
+    }
+
+    private static void importEditionCities() throws IOException {
+        OntModel ontModel = ResearchOntModel.getInstance();
+
+        String editionCitiesFilePath = "src/main/resources/occurs_in.csv";
+        List<String[]> lines = CSV.read(editionCitiesFilePath, separator);
+
+        OntClass cityClass = ontModel.getOntClass(dbo + "City");
+        ObjectProperty cityProp = ontModel.getObjectProperty(dbo + "city");
+
+        for (String[] line : lines) {
+            String editionID = Utils.cleanURI(line[0]);
+            String cityName = line[1];
+
+            Individual edition = ontModel.getIndividual(ns + editionID);
+            Individual city = ontModel.getIndividual(ns + cityName);
+            if (city == null) {
+                city = cityClass.createIndividual(ns + cityName);
+            }
+            ontModel.add(edition, cityProp, city);
 
         }
     }
@@ -389,14 +413,15 @@ public class DefineABox {
         List<String[]> lines = CSV.read(paperProceedFilePath, separator);
 
         ObjectProperty proceedingProp = ontModel.getObjectProperty(ontNS + "proceeding");
-        ObjectProperty publisherProp = ontModel.getObjectProperty(ontModel + "conferenceProceeding");
 
         for (String[] line : lines) {
             String editionID = Utils.cleanURI(line[0]);
             String paperID = "paper" + line[2];
+            String proceedingID = Utils.getProceeding(editionID);
 
-            Individual edition = ontModel.getIndividual(ns + editionID);
+            Individual proceeding = ontModel.getIndividual(ns + proceedingID);
             Individual paper = ontModel.getIndividual(ns + paperID);
+            ontModel.add(paper, proceedingProp, proceeding);
 
         }
     }

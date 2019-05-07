@@ -1,8 +1,6 @@
 package utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by edoardo on 05/05/2019.
@@ -11,6 +9,7 @@ public class Utils {
 
     private static List<String> companies = new ArrayList<String>();
     private static List<String> universities = new ArrayList<String>();
+    private static Map<String, String> editionProc = new HashMap<String, String>();
 
     private static Random r = new Random();
 
@@ -39,6 +38,13 @@ public class Utils {
         return universities;
     }
 
+    public static void putProceeding(String editionID, String proceedingID) {
+        editionProc.put(editionID, proceedingID);
+    }
+
+    public static String getProceeding(String editionID) {
+        return editionProc.get(editionID);
+    }
 
 
     public static String makeISBN()
