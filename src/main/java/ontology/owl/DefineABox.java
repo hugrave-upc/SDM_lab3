@@ -30,8 +30,30 @@ public class DefineABox {
     public static void run() {
 
         try {
+
+            System.out.println("Importing companies...");
+            importCompanies();
+
+            System.out.println("Importing universities...");
+            importUniversities();
+
             System.out.println("Importing writers...");
             importWriters();
+
+            System.out.println("Importing journals...");
+            importJournals();
+
+            System.out.println("Importing volumes...");
+            importVolumes();
+            importYearVolumes();
+
+            System.out.println("Importing conferences...");
+            importConferences();
+
+            System.out.println("Importing editions...");
+            importEditions();
+            importEditionCities();
+            importConferenceEditions();
 
             System.out.println("Importing papers...");
             importPapers();
@@ -42,9 +64,16 @@ public class DefineABox {
             System.out.println("Importing citations...");
             importCitations();
 
-            System.out.println("Importing companies...");
-            importCompanies();
+            System.out.println("Importing paper and volume relation...");
+            importPaperVolume();
 
+            System.out.println("Importing paper and proceeding relation...");
+            importPaperProceeding();
+
+            System.out.println("Importing reviews...");
+            importReviews();
+
+            System.out.println("Done.");
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +123,7 @@ public class DefineABox {
     private static void importUniversities() throws IOException {
         OntModel ontModel = ResearchOntModel.getInstance();
 
-        String companiesFilePath = "src/main/resources/world_universities_out.csv";
+        String companiesFilePath = "src/main/resources/world-universities_out.csv";
         List<String[]> lines = CSV.read(companiesFilePath, separator);
 
         OntClass universityClass = ontModel.getOntClass(dbo + "University");
@@ -174,8 +203,8 @@ public class DefineABox {
         String journalsFilePath = "src/main/resources/journals.csv";
         List<String[]> lines = CSV.read(journalsFilePath, separator);
 
-        OntClass openJournalClass = ontModel.getOntClass(dbo + "OpenAccessJournal");
-        OntClass subscribingJournalClass = ontModel.getOntClass(dbo + "SubscribingJournal");
+        OntClass openJournalClass = ontModel.getOntClass(ontNS + "OpenAccessJournal");
+        OntClass subscribingJournalClass = ontModel.getOntClass(ontNS + "SubscribingJournal");
         OntClass[] journalClasses = {openJournalClass, subscribingJournalClass};
 
         DatatypeProperty nameProp = ontModel.getDatatypeProperty(dbo + "name");
@@ -224,7 +253,7 @@ public class DefineABox {
 
         for (String[] line : lines) {
             String volumeID = Utils.cleanURI(line[0]);
-            String journalName = line[0].split("|")[0];
+            String journalName = line[0].split("\\|")[0];
 
             // Adding the volume
             Individual volume = volumeClass.createIndividual(ns + volumeID);
@@ -257,12 +286,12 @@ public class DefineABox {
             Utils.putProceeding(editionID, proceedingID);
 
             // Adding the edition
-            Individual edition = editionClass.createIndividual(ontNS + editionID);
+            Individual edition = editionClass.createIndividual(ns + editionID);
             Literal literalID = ontModel.createTypedLiteral(editionID, XSDDatatype.XSDstring);
             ontModel.add(edition, editionIDProp, literalID);
 
             // Adding the proceeding
-            Individual proceeding = proceedingClass.createIndividual(ontNS + proceedingID);
+            Individual proceeding = proceedingClass.createIndividual(ns + proceedingID);
             literalID = ontModel.createTypedLiteral(proceedingID, XSDDatatype.XSDstring);
             ontModel.add(proceeding, proceedingIDProp, literalID);
 

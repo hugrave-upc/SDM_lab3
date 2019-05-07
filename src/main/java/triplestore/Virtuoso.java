@@ -16,7 +16,7 @@ public class Virtuoso {
         System.out.println("Connecting to Virtuoso...");
         VirtGraph graph = new VirtGraph(graph_name, VirtURL, user, psw);
         System.out.println("Connected.");
-//        graph.clear();
+        graph.clear();
         return new VirtModel(graph);
     }
 }
