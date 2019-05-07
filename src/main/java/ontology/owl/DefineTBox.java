@@ -116,7 +116,7 @@ public class DefineTBox {
 
         ObjectProperty conferencePublisher = ontModel.createObjectProperty(ns + "conferencePublisher");
         conferencePublisher.addDomain(proceeding);
-        conferencePublisher.addRange(academicConference);
+        conferencePublisher.addRange(edition);
         ObjectProperty jourPublisher = ontModel.createObjectProperty(ns + "journalPublisher");
         jourPublisher.addDomain(volume);
         jourPublisher.addRange(journal);
@@ -181,6 +181,8 @@ public class DefineTBox {
         DatatypeProperty name = ontModel.getDatatypeProperty(dbo + "name");
         name.setDomain(writer);
         name.addDomain(organization);
+        name.addDomain(journal);
+        name.addDomain(academicConference);
         name.addDomain(keyword);
         //name.setRange(XSD.xstring);
 
@@ -193,6 +195,10 @@ public class DefineTBox {
         year.setDomain(volume);
         year.addDomain(edition);
         year.setRange(XSD.gYear);
+
+        DatatypeProperty url = ontModel.createDatatypeProperty(ns + "url");
+        url.setDomain(organization);
+        url.setRange(XSD.anyURI);
 
         // super expensive..
         //researchModel.write(System.out);
