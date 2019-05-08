@@ -1,5 +1,10 @@
 package utils;
 
+import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdfconnection.RDFConnection;
+import org.apache.jena.rdfconnection.RDFConnectionFactory;
+
 import java.util.*;
 
 /**
@@ -10,6 +15,10 @@ public class Utils {
     private static List<String> companies = new ArrayList<String>();
     private static List<String> universities = new ArrayList<String>();
     private static Map<String, String> editionProc = new HashMap<String, String>();
+    private static Map<String, String> cityName_URI = new HashMap<String, String>();
+
+    private static final String dbr = "http://dbpedia.org/resource/";
+    private static final String resNS = "http://localhost/resource#";
 
     private static Random r = new Random();
 
@@ -98,4 +107,51 @@ public class Utils {
         }
         return doubled;
     }
+
+    // Simple entity resolution for the city in DBPEdia
+    public static String getClosestCity(String cityName) {
+        ParameterizedSparqlString pss = new ParameterizedSparqlString();
+        pss.setCommandText(
+            "select ?city\n" +
+            "where {\n" +
+                "?city a dbo:City .\n" +
+                "?city rdfs:label ?label .\n" +
+                "filter (lang(?label) = 'en') .\n" +
+                "filter regex(?label, ?cityName, 'i')\n" +
+                "}\n" +
+            "limit 1"
+        );
+
+        pss.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+        pss.setNsPrefix("dbo", "http://dbpedia.org/ontology/");
+        pss.setLiteral("cityName", cityName);
+
+        QueryExecution qExec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", pss.asQuery());
+
+        ResultSet rs = qExec.execSelect();
+        Resource city = null;
+        while(rs.hasNext()) {
+            QuerySolution qs = rs.next();
+            city = qs.getResource("city");
+        }
+        qExec.close() ;
+
+        if (city == null) {
+            cityName_URI.put(cityName, resNS + cityName);
+        }
+        else {
+            cityName_URI.put(cityName, city.toString());
+        }
+        return cityName_URI.get(cityName);
+    }
+
+    public static boolean hasCity (String cityName) {
+        return cityName_URI.containsKey(cityName);
+    }
+
+    public static String getCityURI (String cityName) {
+        return cityName_URI.get(cityName);
+    }
+
+
 }

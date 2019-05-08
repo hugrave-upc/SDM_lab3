@@ -4,14 +4,12 @@ package ontology.owl;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.datatypes.xsd.impl.RDFLangString;
 import org.apache.jena.ontology.*;
-import org.apache.jena.ontology.impl.IndividualImpl;
 import org.apache.jena.rdf.model.*;
 
-import org.apache.jena.vocabulary.XSD;
+
 import utils.CSV;
 import utils.Utils;
 
-import javax.rmi.CORBA.Util;
 import java.io.IOException;
 import java.util.List;
 
@@ -106,12 +104,20 @@ public class DefineABox {
             ontModel.add(company, nameProp, literalName);
 
             // Inserting the city
-            Individual city = ontModel.getIndividual(ns + cityName);
-            if (city == null) {
-                // create the city
-                city = cityClass.createIndividual(ns + cityName);
-                literalName = ontModel.createTypedLiteral(cityName, RDFLangString.rdfLangString);
-                ontModel.add(city, nameProp, literalName);
+            Resource city;
+            if (!Utils.hasCity(cityName)) {
+                String cityURI = Utils.getClosestCity(cityName);
+                if (cityURI.contains("dbpedia")) {
+                    ontModel.read(cityURI);
+                    city = ontModel.getResource(cityURI);
+                } else {
+                    city = cityClass.createIndividual(cityURI);
+                    Literal literalCityName = ontModel.createTypedLiteral(cityName, RDFLangString.rdfLangString);
+                    ontModel.add(city, nameProp, literalCityName);
+                }
+            }
+            else {
+                city = ontModel.getResource(Utils.getCityURI(cityName));
             }
 
             // Create the relation between company and city
@@ -148,12 +154,20 @@ public class DefineABox {
             ontModel.add(university, urlProp, literalURL);
 
             // Inserting the city
-            Individual city = ontModel.getIndividual(ns + cityName);
-            if (city == null) {
-                // create the city
-                city = cityClass.createIndividual(ns + cityName);
-                literalName = ontModel.createTypedLiteral(cityName, RDFLangString.rdfLangString);
-                ontModel.add(city, nameProp, literalName);
+            Resource city;
+            if (!Utils.hasCity(cityName)) {
+                String cityURI = Utils.getClosestCity(cityName);
+                if (cityURI.contains("dbpedia")) {
+                    ontModel.read(cityURI);
+                    city = ontModel.getResource(cityURI);
+                } else {
+                    city = cityClass.createIndividual(cityURI);
+                    Literal literalCityName = ontModel.createTypedLiteral(cityName, RDFLangString.rdfLangString);
+                    ontModel.add(city, nameProp, literalCityName);
+                }
+            }
+            else {
+                city = ontModel.getResource(Utils.getCityURI(cityName));
             }
             // Create the relation between university and city
             ontModel.add(university, cityProp, city);
@@ -308,15 +322,27 @@ public class DefineABox {
 
         OntClass cityClass = ontModel.getOntClass(dbo + "City");
         ObjectProperty cityProp = ontModel.getObjectProperty(dbo + "city");
+        DatatypeProperty nameProp = ontModel.getDatatypeProperty(dbo + "name");
 
         for (String[] line : lines) {
             String editionID = Utils.cleanURI(line[0]);
             String cityName = line[1];
 
             Individual edition = ontModel.getIndividual(ns + editionID);
-            Individual city = ontModel.getIndividual(ns + cityName);
-            if (city == null) {
-                city = cityClass.createIndividual(ns + cityName);
+            Resource city;
+            if (!Utils.hasCity(cityName)) {
+                String cityURI = Utils.getClosestCity(cityName);
+                if (cityURI.contains("dbpedia")) {
+                    ontModel.read(cityURI);
+                    city = ontModel.getResource(cityURI);
+                } else {
+                    city = cityClass.createIndividual(cityURI);
+                    Literal literalCityName = ontModel.createTypedLiteral(cityName, RDFLangString.rdfLangString);
+                    ontModel.add(city, nameProp, literalCityName);
+                }
+            }
+            else {
+                city = ontModel.getResource(Utils.getCityURI(cityName));
             }
             ontModel.add(edition, cityProp, city);
 

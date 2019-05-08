@@ -43,7 +43,7 @@ public class DefineTBox {
         OntClass subscribingJournal = ontModel.createClass(ns + "SubscribingJournal");
         journal.addSubClass(openJournal);
         journal.addSubClass(subscribingJournal);
-
+        journal.removeSuperClass(ontModel.getResource(dbo + "PeriodicalLiterature"));
 
         ontModel.read(dbo + "AcademicConference");
         OntClass academicConference = ontModel.getOntClass(dbo + "AcademicConference");
@@ -53,12 +53,7 @@ public class DefineTBox {
         academicConference.addSubClass(workshop);
 
         OntClass edition = ontModel.createClass(ns + "Edition");
-
-        OntClass topic = ontModel.createClass(ns + "ScientificTopic");
-        // Integrating with the academic subject from dbpedia
-        subClassOf(topic, dbo + "AcademicSubject");
-
-        OntClass keyword = ontModel.createClass(ns + "Keyword");
+        subClassOf(edition, dbo + "SocietalEvent");
 
         OntClass paper = ontModel.createClass(ns + "ScientificPaper");
         subClassOf(paper, dbo + "Article");
@@ -86,7 +81,6 @@ public class DefineTBox {
         OntClass university = ontModel.getOntClass(dbo + "University");
 
         ontModel.read(dbo + "City");
-        OntClass city = ontModel.getOntClass(dbo + "City");
 
         /*
          * Defining the object properties
@@ -132,10 +126,6 @@ public class DefineTBox {
         cites.setDomain(paper);
         cites.setRange(paper);
 
-        ObjectProperty topic_prop = ontModel.createObjectProperty(ns + "topic");
-        topic_prop.setDomain(collection);
-        topic_prop.addDomain(keyword);
-        topic_prop.setRange(topic);
 
         ontModel.read(dbo + "employer");
         ObjectProperty employer = ontModel.getObjectProperty(dbo + "employer");
@@ -159,16 +149,18 @@ public class DefineTBox {
         ID.setRange(XSD.xstring);
         DatatypeProperty paperID = ontModel.createDatatypeProperty(ns + "paperID");
         paperID.setDomain(paper);
-        paperID.setRange(XSD.xstring);
         DatatypeProperty proceedID = ontModel.createDatatypeProperty(ns + "proceedingID");
         proceedID.setDomain(proceeding);
-        proceedID.setRange(XSD.xstring);
         DatatypeProperty volumeID = ontModel.createDatatypeProperty(ns + "volumeID");
         volumeID.setDomain(volume);
-        volumeID.setRange(XSD.xstring);
         DatatypeProperty editionID = ontModel.createDatatypeProperty(ns + "editionID");
         editionID.setDomain(edition);
-        editionID.setRange(XSD.xstring);
+
+        ID.addSubProperty(paperID);
+        ID.addSubProperty(proceedID);
+        ID.addSubProperty(volumeID);
+        ID.addSubProperty(editionID);
+
 
         DatatypeProperty decision = ontModel.createDatatypeProperty(ns + "decision");
         decision.setDomain(review);
@@ -183,8 +175,6 @@ public class DefineTBox {
         name.addDomain(organization);
         name.addDomain(journal);
         name.addDomain(academicConference);
-        name.addDomain(keyword);
-        //name.setRange(XSD.xstring);
 
         ontModel.read(dbo + "title");
         DatatypeProperty title = ontModel.getDatatypeProperty(dbo + "title");
@@ -200,8 +190,6 @@ public class DefineTBox {
         url.setDomain(organization);
         url.setRange(XSD.anyURI);
 
-        // super expensive..
-        //researchModel.write(System.out);
     }
 
     private static void subClassOf(OntClass child, String parentURI) {
